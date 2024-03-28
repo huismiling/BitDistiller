@@ -283,6 +283,7 @@ def train():
         model_args.model_name_or_path,
         torch_dtype=torch.bfloat16,
         device_map=device_map,
+        trust_remote_code=True,
     )
 
     tokenizer = transformers.AutoTokenizer.from_pretrained(
@@ -291,6 +292,7 @@ def train():
         model_max_length=training_args.model_max_length,
         padding_side="right",
         use_fast=False,
+        trust_remote_code=True,
     )
 
     pad_status = True
@@ -336,6 +338,7 @@ def train():
             torch_dtype=torch.bfloat16,
             device_map=device_map,
             max_memory=max_memory,
+            trust_remote_code=True,
         )
         teacher_model.eval()
         teacher_model.cuda()

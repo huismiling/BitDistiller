@@ -112,18 +112,21 @@ def get_calib_dataset_gsm8k(tokenizer=None, n_samples=512, block_size=512):
     return [cat_samples[:, i*block_size:(i+1)*block_size] for i in range(n_split)]
 
 def get_blocks(model):
-    if isinstance(model, LlamaForCausalLM):
-        layers = model.model.layers
-    elif isinstance(model, OPTForCausalLM):
-        layers = model.model.decoder.layers
-    elif isinstance(model, BloomForCausalLM):
+    try:
         layers = model.transformer.h
-    elif "mpt" in str(model.__class__).lower():
-        layers = model.transformer.blocks
-    elif "falcon" in str(model.__class__).lower():
-        layers = model.transformer.h
-    else:
-        raise NotImplementedError(type(model))
+    except:
+        if isinstance(model, LlamaForCausalLM):
+            layers = model.model.layers
+        elif isinstance(model, OPTForCausalLM):
+            layers = model.model.decoder.layers
+        elif isinstance(model, BloomForCausalLM):
+            layers = model.transformer.h
+        elif "mpt" in str(model.__class__).lower():
+            layers = model.transformer.blocks
+        elif "falcon" in str(model.__class__).lower():
+            layers = model.transformer.h
+        else:
+            raise NotImplementedError(type(model))
     return layers
 
 def append_str_prefix(x, prefix):
@@ -137,21 +140,24 @@ def append_str_prefix(x, prefix):
         return x
 
 def move_embed(model, device):
-    if isinstance(model, LlamaForCausalLM):
-        model.model.embed_tokens = model.model.embed_tokens.to(device)
-    elif isinstance(model, OPTForCausalLM):
-        model.model.decoder.embed_tokens = model.model.decoder.embed_tokens.to(device)
-        model.model.decoder.embed_positions = model.model.decoder.embed_positions.to(device)
-    elif isinstance(model, BloomForCausalLM):
-        model.transformer.word_embeddings = model.transformer.word_embeddings.to(device)
-        model.transformer.word_embeddings_layernorm = model.transformer.word_embeddings_layernorm.to(device)
-    elif "mpt" in str(model.__class__).lower():
+    try:
         model.transformer.wte = model.transformer.wte.to(device)
-        model.transformer.emb_drop = model.transformer.emb_drop.to(device)
-    elif "falcon" in str(model.__class__).lower():
-        model.transformer.word_embeddings = model.transformer.word_embeddings.to(device)
-    else:
-        raise NotImplementedError(type(model))
+    except:
+        if isinstance(model, LlamaForCausalLM):
+            model.model.embed_tokens = model.model.embed_tokens.to(device)
+        elif isinstance(model, OPTForCausalLM):
+            model.model.decoder.embed_tokens = model.model.decoder.embed_tokens.to(device)
+            model.model.decoder.embed_positions = model.model.decoder.embed_positions.to(device)
+        elif isinstance(model, BloomForCausalLM):
+            model.transformer.word_embeddings = model.transformer.word_embeddings.to(device)
+            model.transformer.word_embeddings_layernorm = model.transformer.word_embeddings_layernorm.to(device)
+        elif "mpt" in str(model.__class__).lower():
+            model.transformer.wte = model.transformer.wte.to(device)
+            model.transformer.emb_drop = model.transformer.emb_drop.to(device)
+        elif "falcon" in str(model.__class__).lower():
+            model.transformer.word_embeddings = model.transformer.word_embeddings.to(device)
+        else:
+            raise NotImplementedError(type(model))
 
 def get_named_linears(module):
     return {name: m for name, m in module.named_modules() if isinstance(m, nn.Linear)}

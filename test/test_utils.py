@@ -67,7 +67,7 @@ def pseudo_quantize_model_weight(
     model, w_bit, q_config, quant_type="int"
 ):  
     if quant_type == "int":
-        layers = model.model.layers
+        layers = model.transformer.h
         for i in tqdm(range(len(layers)), desc=f"pseudo {quant_type} weight quantization..."):
             named_linears = get_named_linears(layers[i])
             for n, m in named_linears.items():

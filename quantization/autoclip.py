@@ -20,6 +20,7 @@ def auto_2clip_layer(w, input_feat, n_bit, q_config,
     # w           [co, ci]      -> [co, 1, n_group, group size]
     # input_feat  [n_token, ci] -> [1, n_token, n_group, group size]
 
+    print(f"w.shape {w.shape}")
     group_size = q_config["q_group_size"] if q_config["q_group_size"] > 0 else w.shape[1]
 
     input_feat = input_feat.view(-1, input_feat.shape[-1])

@@ -37,7 +37,8 @@ if __name__ == '__main__':
     model = AutoModelForCausalLM.from_pretrained(args.model, 
                                                 torch_dtype=torch.bfloat16, 
                                                 use_safetensors=True,
-                                                device_map='auto'
+                                                device_map='auto',
+                                                trust_remote_code=True,
                                                 )
         
     if args.quant_type is not None:
@@ -49,7 +50,9 @@ if __name__ == '__main__':
             model, w_bit=args.bits, q_config=q_config, quant_type=args.quant_type
         )
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model)
+    tokenizer = AutoTokenizer.from_pretrained(args.model,
+                                            trust_remote_code=True,
+                                            )
 
     model.eval()
 
