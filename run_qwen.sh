@@ -1,7 +1,8 @@
 
 set -x
 
-model_path=/root/data/zhangxiao/work_xiao/aicas2024/Qwen/output_qwen/checkpoint-2100
+aicas2024_root=$WPD/../
+model_path=$aicas2024_root/Qwen/output_qwen/checkpoint-xxx
 
 pushd quantization
 python autoclip.py \
@@ -40,8 +41,8 @@ popd
 pushd train
 
 bash train.sh  \
-    ../data/generation/datasets/qwen_1_8B/mix_wiki_alpaca_8000.json \
-    ./ckpts/qwen_1_8B/int4-g2048-0328/ \
+    ../data/generation/datasets/qwen_1_8B/wikitext_T0.7_N1024_S42_3000.json \
+    ./ckpts/qwen_1_8B/int4-g2048/ \
     ./logs/qwen_1_8B/int4-g2048/ 4
 
 
@@ -49,8 +50,8 @@ popd
 
 pushd test/general
 CUDA_VISIBLE_DEVICES=0 python llm_eval.py \
-    --model ../../train/ckpts/qwen_1_8B/int4-g2048/checkpoint-600/ \
-    --eval_tasks arc_challenge,winogrande,hellaswag,piqa \
+    --model ../../train/ckpts/qwen_1_8B/int4-g2048/checkpoint-xxx/ \
+    --eval_tasks arc_challenge,hellaswag,piqa \
     --test_set \
     --bits 4 --group_size -1 \
     --quant_type int --num_fewshot 0 
