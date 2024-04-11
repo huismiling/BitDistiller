@@ -114,6 +114,7 @@ def get_calib_dataset_gsm8k(tokenizer=None, n_samples=512, block_size=512):
 def get_blocks(model):
     try:
         layers = model.transformer.h
+        return layers
     except:
         if isinstance(model, LlamaForCausalLM):
             layers = model.model.layers
@@ -142,6 +143,11 @@ def append_str_prefix(x, prefix):
 def move_embed(model, device):
     try:
         model.transformer.wte = model.transformer.wte.to(device)
+        return
+    except:
+        pass
+    try:
+        model.model.embed_tokens = model.model.embed_tokens.to(device)
     except:
         if isinstance(model, LlamaForCausalLM):
             model.model.embed_tokens = model.model.embed_tokens.to(device)

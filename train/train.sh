@@ -1,4 +1,5 @@
-export MODEL_PATH=/root/data/zhangxiao/work_xiao/aicas2024/Qwen/output_qwen/checkpoint-2100
+aicas2024_root=$PWD/../
+export MODEL_PATH=$aicas2024_root/Qwen/output_qwen/checkpoint-xxx
 export SAVE_PATH=$2
 export MASTER_ADDR="localhost"
 export MASTER_PORT="1321"
